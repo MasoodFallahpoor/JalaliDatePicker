@@ -1,4 +1,4 @@
-JalaliDatePicker
+JalaliDatePicker [![Build Status](https://travis-ci.org/MasoodFallahpoor/JalaliDatePicker.svg?branch=master)](https://travis-ci.org/MasoodFallahpoor/JalaliDatePicker)
 =========
 JalaliDatePicker is a Java swing component that provides an easy way for selecting a Jalali (a.k.a. Shamsi) date.
 
