@@ -32,26 +32,38 @@ import javax.swing.JPanel;
 import javax.swing.JTextField;
 
 /**
- * <code>JalaliDatePicker</code> is a Swing component that provides an easy way
- * for selecting a Jalali (a.k.a. Shamsi) date.
+ * <code>JalaliDatePicker</code> is a Swing component that provides an easy way for selecting a Jalali (a.k.a. Shamsi)
+ * date.
  *
  * @author Masood Fallahpoor
  */
 public class JalaliDatePicker extends JComponent {
 
     private ArrayList<DateChangeListener> dataChangeListeners;
-    private String previousDate;
-    private String currentDate;
+    private Calendar previousDate;
+    private Calendar currentDate;
     private JTextField dateTextField;
 
     /**
-     * Constructs an instance of <code>JalaliDatePicker</code>.
+     * Constructs an instance of <code>JalaliDatePicker</code> with given date as default date.
+     *
+     * @param year  default year. Year must be in range [current year - 50, current year + 50]
+     * @param month default month. Month is 1-based i.e. first month is 1
+     * @param day   default day of month. Day of month is 1-based i.e. first day of month is 1
+     */
+    public JalaliDatePicker(int year, int month, int day) {
+
+        this();
+        setDate(year, month, day);
+    }
+
+    /**
+     * Constructs an instance of <code>JalaliDatePicker</code> with its date set to current date.
      */
     public JalaliDatePicker() {
 
         dataChangeListeners = new ArrayList<>();
-        previousDate = "";
-        currentDate = "";
+        resetDates();
 
         setLayout(new FlowLayout(FlowLayout.CENTER, 0, 0));
         JPanel panel = new JPanel();
@@ -59,16 +71,15 @@ public class JalaliDatePicker extends JComponent {
         dateTextField = new JTextField(7);
         dateTextField.setEditable(false);
 
-        JButton mShowDatePickerButton = new JButton("...");
-        mShowDatePickerButton.addActionListener(
-                new ShowDatePickerDialogAction());
+        JButton showDatePickerButton = new JButton("...");
+        showDatePickerButton.addActionListener(new ShowDatePickerDialogAction());
 
         panel.add(dateTextField);
-        panel.add(mShowDatePickerButton);
+        panel.add(showDatePickerButton);
 
         add(panel);
 
-    } // end of JalaliDatePicker's constructor method
+    } // end of JalaliDatePicker's constructor
 
     /**
      * Adds a <code>DateChangeListener</code> to <code>JalaliDatePicker</code>.
@@ -84,8 +95,7 @@ public class JalaliDatePicker extends JComponent {
     }
 
     /**
-     * Removes given <code>DateChangeListener</code> from
-     * <code>JalaliDatePicker</code>.
+     * Removes given <code>DateChangeListener</code> from <code>JalaliDatePicker</code>.
      *
      * @param dateChangeListener the listener to be removed
      */
@@ -94,49 +104,69 @@ public class JalaliDatePicker extends JComponent {
     }
 
     /**
-     * Returns the date of <code>JalaliDatePicker</code> as a String with the
-     * format of yyyy/mm/dd.
+     * Returns selected year
      *
-     * @return Date of <code>JalaliDatePicker</code>
+     * @return selected year
      */
-    public String getDate() {
-        return dateTextField.getText();
+    public int getYear() {
+        return currentDate.get(Calendar.YEAR);
     }
 
     /**
-     * Sets the date of <code>JalaliDatePicker</code> to given date. Argument
-     * <code>date</code> should be a valid Jalali date with general format of
-     * yyyy/mm/dd or otherwise the date of <code>JalaliDatePicker</code> will be
-     * set to current date.
+     * Returns selected month. Month is 1-based i.e. first month is 1.
      *
-     * @param date Date to be set as <code>JalaliDatePicker</code>'s date.
+     * @return selected month
      */
-    public void setDate(String date) {
+    public int getMonth() {
+        return (currentDate.get(Calendar.MONTH) + 1);
+    }
 
-        if (Utils.isDateValid(date)) {
-            dateTextField.setText(Utils.toPersianNumber(date));
-        } else {
-            SimpleDateFormat sdf = new SimpleDateFormat("yyyy/MM/dd", new ULocale("fa-IR"));
-            Calendar calendar = Calendar.getInstance(new ULocale("@calendar=persian"));
+    /**
+     * Returns selected day of month. Day of month is 1-based i.e. first day of month is 1.
+     *
+     * @return selected day of month
+     */
+    public int getDay() {
+        return currentDate.get(Calendar.DAY_OF_MONTH);
+    }
 
-            dateTextField.setText(Utils.toPersianNumber(sdf.format(calendar.getTime())));
+    /**
+     * Sets the date of <code>JalaliDatePicker</code>. If provided date is invalid then <code>JalaliDatePicker</code>'s
+     * date is set to current date.
+     *
+     * @param year  the year to set. Year must be in range [current year - 50, current year + 50]
+     * @param month the month to set. Month is 1-based i.e. first month is 1
+     * @param day   day of month to set. Day of month is 1-based i.e. first day of month is 1
+     */
+    public void setDate(int year, int month, int day) {
+
+        SimpleDateFormat sdf = new SimpleDateFormat("yyyy/MM/dd", new ULocale("fa-IR"));
+
+        if (Utils.isDateValid(year, month, day)) {
+            currentDate.set(year, month - 1, day);
         }
 
-    } // end of method setDate
+        dateTextField.setText(Utils.toPersianNumber(sdf.format(currentDate.getTime())));
+
+    }
 
     /**
      * Clears the date of <code>JalaliDatePicker</code>.
      */
     public void clearDate() {
         dateTextField.setText("");
+        resetDates();
     }
 
     private void notifyListeners() {
+        dataChangeListeners.forEach(l -> l.dateChanged(currentDate.get(Calendar.YEAR),
+                currentDate.get(Calendar.MONTH) + 1,
+                currentDate.get(Calendar.DAY_OF_MONTH)));
+    }
 
-        for (DateChangeListener listener : dataChangeListeners) {
-            listener.dateChanged(currentDate);
-        }
-
+    private void resetDates() {
+        previousDate = Calendar.getInstance(new ULocale("@calendar=persian"));
+        currentDate = (Calendar) previousDate.clone();
     }
 
     private class ShowDatePickerDialogAction implements ActionListener {
@@ -144,17 +174,20 @@ public class JalaliDatePicker extends JComponent {
         @Override
         public void actionPerformed(ActionEvent e) {
 
-            final DatePickerDialog datePickerDialog = new DatePickerDialog();
+            DatePickerDialog datePickerDialog = new DatePickerDialog();
 
             datePickerDialog.addWindowListener(new WindowAdapter() {
                 @Override
                 public void windowClosed(WindowEvent e) {
 
-                    currentDate = datePickerDialog.getPickedDate();
+                    currentDate.set(datePickerDialog.getPickedYear(),
+                            datePickerDialog.getPickedMonth(),
+                            datePickerDialog.getPickedDay());
 
-                    if (!currentDate.equalsIgnoreCase(previousDate)) {
-                        previousDate = currentDate;
-                        dateTextField.setText(currentDate);
+                    if (currentDate.compareTo(previousDate) != 0) {
+                        previousDate = (Calendar) currentDate.clone();
+                        SimpleDateFormat sdf = new SimpleDateFormat("yyyy/MM/dd", new ULocale("fa-IR"));
+                        dateTextField.setText(Utils.toPersianNumber(sdf.format(currentDate.getTime())));
                         notifyListeners();
                     }
 

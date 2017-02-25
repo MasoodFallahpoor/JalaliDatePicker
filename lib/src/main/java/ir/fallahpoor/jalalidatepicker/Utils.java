@@ -16,7 +16,8 @@
  */
 package ir.fallahpoor.jalalidatepicker;
 
-import java.util.regex.Pattern;
+import com.ibm.icu.util.Calendar;
+import com.ibm.icu.util.ULocale;
 
 /**
  * Class Utils provides utility methods for other classes.
@@ -25,44 +26,19 @@ import java.util.regex.Pattern;
  */
 class Utils {
 
-    private static Pattern datePattern;
-
-    static {
-        datePattern = Pattern.compile("\\d{4}(/\\d{2}){2}", Pattern.UNICODE_CHARACTER_CLASS);
-    }
-
     private Utils() {
     }
 
-    static boolean isDateValid(String date) {
+    static boolean isDateValid(int year, int month, int day) {
 
-        int[] dateComponents;
         int[] daysOfMonth1 = {31, 31, 31, 31, 31, 31, 30, 30, 30, 30, 30, 30};
         int[] daysOfMonth2 = {31, 31, 31, 31, 31, 31, 30, 30, 30, 30, 30, 29};
-        int year, month, day;
+        Calendar calendar = Calendar.getInstance(new ULocale("@calendar=persian"));
+        int currentYear = calendar.get(Calendar.YEAR);
 
-        if (date == null || !datePattern.matcher(date).matches()) {
-            return false;
-        } else {
-            dateComponents = getDateComponents(date);
-
-            year = dateComponents[0];
-            month = dateComponents[1];
-            day = dateComponents[2];
-
-            return (1 <= month && month <= 12)
-                    && (1 <= day && day <= (isLeapYear(year) ? daysOfMonth1[month - 1] : daysOfMonth2[month - 1]));
-        }
-
-    } // end of method isDateValid
-
-    private static int[] getDateComponents(String date) {
-
-        String[] dateTokens = date.split("/");
-
-        return new int[]{Integer.parseInt(dateTokens[0]),
-                Integer.parseInt(dateTokens[1]),
-                Integer.parseInt(dateTokens[2])};
+        return (currentYear - 50 <= year && year <= currentYear + 50) &&
+                (1 <= month && month <= 12) &&
+                (1 <= day && day <= (isLeapYear(year) ? daysOfMonth1[month - 1] : daysOfMonth2[month - 1]));
 
     }
 

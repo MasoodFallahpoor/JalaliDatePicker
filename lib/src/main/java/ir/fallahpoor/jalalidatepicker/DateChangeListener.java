@@ -17,8 +17,8 @@
 package ir.fallahpoor.jalalidatepicker;
 
 /**
- * The listener interface for receiving 'Date Change' events of
- * <code>JalaliDatePicker</code>. The class that is interested in processing a
+ * The interface for receiving 'Date Change' events of
+ * <code>JalaliDatePicker</code>. A class that is interested in processing a
  * 'Date Change' event implements this interface, and the object created with
  * that class is registered with <code>JalaliDatePicker</code>, using the
  * <code>JalaliDatePicker</code>'s <code>addDateChangeListener</code> method.
@@ -32,8 +32,10 @@ public interface DateChangeListener {
     /**
      * Invoked when a 'Date Change' event occurs.
      *
-     * @param newDate New date
+     * @param newYear  new year
+     * @param newMonth new month
+     * @param newDay   new day
      */
-    void dateChanged(String newDate);
+    void dateChanged(int newYear, int newMonth, int newDay);
 
 }

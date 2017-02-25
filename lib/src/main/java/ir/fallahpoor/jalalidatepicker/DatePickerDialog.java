@@ -187,15 +187,16 @@ class DatePickerDialog extends JDialog {
 
     } // end of method displayDate
 
-    public String getPickedDate() {
+    public int getPickedYear() {
+        return currentYear;
+    }
 
-        SimpleDateFormat sdf = new SimpleDateFormat("yyyy/MM/dd",
-                persianLocale);
+    public int getPickedMonth() {
+        return currentMonth;
+    }
 
-        calendar.set(currentYear, currentMonth, currentDay);
-
-        return Utils.toPersianNumber(sdf.format(calendar.getTime()));
-
+    public int getPickedDay() {
+        return currentDay;
     }
 
 } // end of class DatePickerDialog
