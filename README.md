@@ -4,6 +4,14 @@ JalaliDatePicker is a Java swing component that provides an easy way for selecti
 
 ![Screenshot of JalaliDatePicker](screenshots/screenshot1.PNG?raw=true "Screenshot of JalaliDatePicker")
 
+Usage
+-----
+Download JalaliDatePicker.jar from release tab. Add the downloaded JAR file to your project. With JAR file added to your
+project, a new class named JalaliDatePicker and a new interface named DateChangeListener will be available to you.
+
+The [sample](https://github.com/MasoodFallahpoor/JalaliDatePicker/blob/master/sample/src/main/java/ir/fallahpoor/sample/Main.java)
+demonstrates some common methods of JalaliDatePicker.
+
 License
 --------
 Copyright (C) 2017 masood@fallahpoor.ir
