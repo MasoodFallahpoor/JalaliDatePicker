@@ -45,7 +45,7 @@ public class JalaliDatePicker extends JComponent {
     private JTextField dateTextField;
 
     /**
-     * Constructs an instance of <code>JalaliDatePicker</code> with given date as default date.
+     * Constructs an instance of <code>JalaliDatePicker</code> with given date as initial date.
      *
      * @param year  default year. Year must be in range [current year - 50, current year + 50]
      * @param month default month. Month is 1-based i.e. first month is 1
@@ -58,7 +58,7 @@ public class JalaliDatePicker extends JComponent {
     }
 
     /**
-     * Constructs an instance of <code>JalaliDatePicker</code> with its date set to current date.
+     * Constructs an instance of <code>JalaliDatePicker</code> with its initial date set to current date.
      */
     public JalaliDatePicker() {
 
