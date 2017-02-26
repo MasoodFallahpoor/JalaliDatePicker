@@ -99,12 +99,12 @@ public class JalaliDatePicker extends JComponent {
         Calendar calendar = Calendar.getInstance(new ULocale("@calendar=persian"));
 
         int intYear = (year == null ? calendar.get(Calendar.YEAR) : year);
-        int intMonth = (month == null ? calendar.get(Calendar.MONTH) : month);
+        int intMonth = (month == null ? calendar.get(Calendar.MONTH) + 1 : month);
         int intDay = (day == null ? calendar.get(Calendar.DAY_OF_MONTH) : day);
 
         defaultDate = (Calendar) calendar.clone();
 
-        defaultDate.set(intYear, intMonth, intDay);
+        defaultDate.set(intYear, intMonth - 1, intDay);
         previousDate = (Calendar) defaultDate.clone();
         currentDate = (Calendar) defaultDate.clone();
 
@@ -193,7 +193,7 @@ public class JalaliDatePicker extends JComponent {
         currentDate = (Calendar) defaultDate.clone();
 
         setDate(defaultDate.get(Calendar.YEAR),
-                defaultDate.get(Calendar.MONTH),
+                defaultDate.get(Calendar.MONTH) + 1,
                 defaultDate.get(Calendar.DAY_OF_MONTH));
     }
 
