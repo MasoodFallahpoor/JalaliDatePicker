@@ -15,7 +15,7 @@ public class Main {
 
             frame.setLayout(new BorderLayout());
 
-            JalaliDatePicker jalaliDatePicker = new JalaliDatePicker();
+            JalaliDatePicker jalaliDatePicker = new JalaliDatePicker(frame);
             // Use the following line to set the initial date of JalaliDatePicker
             // JalaliDatePicker jalaliDatePicker = new JalaliDatePicker(1367, 8, 6);
 

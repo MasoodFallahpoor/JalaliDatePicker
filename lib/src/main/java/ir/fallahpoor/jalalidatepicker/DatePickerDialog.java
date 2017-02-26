@@ -28,11 +28,7 @@ import java.awt.FlowLayout;
 import java.awt.GridLayout;
 import java.util.Locale;
 import java.util.ResourceBundle;
-import javax.swing.JButton;
-import javax.swing.JDialog;
-import javax.swing.JLabel;
-import javax.swing.JPanel;
-import javax.swing.JSpinner;
+import javax.swing.*;
 
 /**
  * @author Masood Fallahpoor
@@ -48,7 +44,7 @@ class DatePickerDialog extends JDialog {
     private static ULocale persianLocale;
     private NumberSpinner yearSpinner;
 
-    DatePickerDialog() {
+    DatePickerDialog(JFrame parentFrame) {
 
         ResourceBundle stringsBundle = ResourceBundle.getBundle("strings", new Locale("fa", "IR"));
         String[] dayNames = {stringsBundle.getString("sat"), stringsBundle.getString("sun"),
@@ -148,7 +144,7 @@ class DatePickerDialog extends JDialog {
         add(navigationPanel, BorderLayout.SOUTH);
         pack();
         setResizable(false);
-        setLocationRelativeTo(null);
+        setLocationRelativeTo(parentFrame);
         displayDate();
         setVisible(true);
 

@@ -26,10 +26,7 @@ import java.awt.event.ActionListener;
 import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
 import java.util.ArrayList;
-import javax.swing.JButton;
-import javax.swing.JComponent;
-import javax.swing.JPanel;
-import javax.swing.JTextField;
+import javax.swing.*;
 
 /**
  * <code>JalaliDatePicker</code> is a Swing component that provides an easy way for selecting a Jalali (a.k.a. Shamsi)
@@ -43,6 +40,7 @@ public class JalaliDatePicker extends JComponent {
     private Calendar previousDate;
     private Calendar currentDate;
     private JTextField dateTextField;
+    private JFrame parentFrame;
 
     /**
      * Constructs an instance of <code>JalaliDatePicker</code> with given date as initial date.
@@ -51,16 +49,18 @@ public class JalaliDatePicker extends JComponent {
      * @param month default month. Month is 1-based i.e. first month is 1
      * @param day   default day of month. Day of month is 1-based i.e. first day of month is 1
      */
-    public JalaliDatePicker(int year, int month, int day) {
+    public JalaliDatePicker(JFrame parentFrame, int year, int month, int day) {
 
-        this();
+        this(parentFrame);
         setDate(year, month, day);
     }
 
     /**
      * Constructs an instance of <code>JalaliDatePicker</code> with its initial date set to current date.
      */
-    public JalaliDatePicker() {
+    public JalaliDatePicker(JFrame parentFrame) {
+
+        this.parentFrame = parentFrame;
 
         dataChangeListeners = new ArrayList<>();
         resetDates();
@@ -174,7 +174,7 @@ public class JalaliDatePicker extends JComponent {
         @Override
         public void actionPerformed(ActionEvent e) {
 
-            DatePickerDialog datePickerDialog = new DatePickerDialog();
+            DatePickerDialog datePickerDialog = new DatePickerDialog(parentFrame);
 
             datePickerDialog.addWindowListener(new WindowAdapter() {
                 @Override
