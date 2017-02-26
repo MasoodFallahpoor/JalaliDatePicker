@@ -26,6 +26,7 @@ import java.awt.ComponentOrientation;
 import java.awt.Dimension;
 import java.awt.FlowLayout;
 import java.awt.GridLayout;
+import java.awt.event.ActionListener;
 import java.util.Locale;
 import java.util.ResourceBundle;
 import javax.swing.*;
@@ -163,6 +164,9 @@ class DatePickerDialog extends JDialog {
 
         for (JButton button : buttons) {
             button.setText("");
+            for (ActionListener listener : button.getActionListeners()) {
+                button.removeActionListener(listener);
+            }
         }
 
         for (int i = dayOfWeek - 1, dayCounter = 1; dayCounter <= daysInMonth; i++, dayCounter++) {
