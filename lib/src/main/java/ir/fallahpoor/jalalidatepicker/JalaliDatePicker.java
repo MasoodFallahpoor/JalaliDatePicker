@@ -21,10 +21,8 @@ import com.ibm.icu.util.Calendar;
 import com.ibm.icu.util.ULocale;
 
 import java.awt.FlowLayout;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
-import java.awt.event.WindowAdapter;
-import java.awt.event.WindowEvent;
+import java.awt.event.ComponentAdapter;
+import java.awt.event.ComponentEvent;
 import java.util.ArrayList;
 import javax.swing.*;
 
@@ -39,31 +37,50 @@ public class JalaliDatePicker extends JComponent {
     private ArrayList<DateChangeListener> dataChangeListeners;
     private Calendar previousDate;
     private Calendar currentDate;
+    private Calendar defaultDate;
     private JTextField dateTextField;
-    private JFrame parentFrame;
+    private DatePickerDialog datePickerDialog;
 
     /**
-     * Constructs an instance of <code>JalaliDatePicker</code> with given date as initial date.
+     * Constructs an instance of <code>JalaliDatePicker</code> with its default date set to current date.
      *
-     * @param year  default year. Year must be in range [current year - 50, current year + 50]
-     * @param month default month. Month is 1-based i.e. first month is 1
-     * @param day   default day of month. Day of month is 1-based i.e. first day of month is 1
+     * @param parentFrame the parent of JalaliDatePicker
      */
-    public JalaliDatePicker(JFrame parentFrame, int year, int month, int day) {
-
-        this(parentFrame);
-        setDate(year, month, day);
+    public JalaliDatePicker(JFrame parentFrame) {
+        this(parentFrame, null, null, null);
     }
 
     /**
-     * Constructs an instance of <code>JalaliDatePicker</code> with its initial date set to current date.
+     * Constructs an instance of <code>JalaliDatePicker</code> with given date as default date.
+     *
+     * @param parentFrame the parent of JalaliDatePicker
+     * @param year        default year. Year must be in range [current year - 50, current year + 50]. If year is null
+     *                    current year is used.
+     * @param month       default month. Month is 1-based i.e. first month is 1. If month is null current month is used.
+     * @param day         default day of month. Day of month is 1-based i.e. first day of month is 1. If day if month is
+     *                    null current day of month is used.
      */
-    public JalaliDatePicker(JFrame parentFrame) {
+    public JalaliDatePicker(JFrame parentFrame, Integer year, Integer month, Integer day) {
 
-        this.parentFrame = parentFrame;
+        datePickerDialog = new DatePickerDialog(parentFrame, year, month, day);
+        datePickerDialog.addComponentListener(new ComponentAdapter() {
+            @Override
+            public void componentHidden(ComponentEvent e) {
+                super.componentHidden(e);
+                currentDate.set(datePickerDialog.getPickedYear(),
+                        datePickerDialog.getPickedMonth(),
+                        datePickerDialog.getPickedDay());
+
+                if (currentDate.compareTo(previousDate) != 0) {
+                    previousDate = (Calendar) currentDate.clone();
+                    SimpleDateFormat sdf = new SimpleDateFormat("yyyy/MM/dd", new ULocale("fa-IR"));
+                    dateTextField.setText(Utils.toPersianNumber(sdf.format(currentDate.getTime())));
+                    notifyListeners();
+                }
+            }
+        });
 
         dataChangeListeners = new ArrayList<>();
-        resetDates();
 
         setLayout(new FlowLayout(FlowLayout.CENTER, 0, 0));
         JPanel panel = new JPanel();
@@ -72,12 +89,26 @@ public class JalaliDatePicker extends JComponent {
         dateTextField.setEditable(false);
 
         JButton showDatePickerButton = new JButton("...");
-        showDatePickerButton.addActionListener(new ShowDatePickerDialogAction());
+        showDatePickerButton.addActionListener(e -> datePickerDialog.setVisible(true));
 
         panel.add(dateTextField);
         panel.add(showDatePickerButton);
 
         add(panel);
+
+        Calendar calendar = Calendar.getInstance(new ULocale("@calendar=persian"));
+
+        int intYear = (year == null ? calendar.get(Calendar.YEAR) : year);
+        int intMonth = (month == null ? calendar.get(Calendar.MONTH) : month);
+        int intDay = (day == null ? calendar.get(Calendar.DAY_OF_MONTH) : day);
+
+        defaultDate = (Calendar) calendar.clone();
+
+        defaultDate.set(intYear, intMonth, intDay);
+        previousDate = (Calendar) defaultDate.clone();
+        currentDate = (Calendar) defaultDate.clone();
+
+        setDate(intYear, intMonth, intDay);
 
     } // end of JalaliDatePicker's constructor
 
@@ -147,15 +178,23 @@ public class JalaliDatePicker extends JComponent {
         }
 
         dateTextField.setText(Utils.toPersianNumber(sdf.format(currentDate.getTime())));
+        datePickerDialog.setDate(currentDate.get(Calendar.YEAR),
+                currentDate.get(Calendar.MONTH),
+                currentDate.get(Calendar.DAY_OF_MONTH));
 
     }
 
     /**
      * Clears the date of <code>JalaliDatePicker</code>.
      */
-    public void clearDate() {
-        dateTextField.setText("");
-        resetDates();
+    public void resetDate() {
+
+        previousDate = (Calendar) defaultDate.clone();
+        currentDate = (Calendar) defaultDate.clone();
+
+        setDate(defaultDate.get(Calendar.YEAR),
+                defaultDate.get(Calendar.MONTH),
+                defaultDate.get(Calendar.DAY_OF_MONTH));
     }
 
     private void notifyListeners() {
@@ -163,40 +202,6 @@ public class JalaliDatePicker extends JComponent {
                 currentDate.get(Calendar.MONTH) + 1,
                 currentDate.get(Calendar.DAY_OF_MONTH)));
     }
-
-    private void resetDates() {
-        previousDate = Calendar.getInstance(new ULocale("@calendar=persian"));
-        currentDate = (Calendar) previousDate.clone();
-    }
-
-    private class ShowDatePickerDialogAction implements ActionListener {
-
-        @Override
-        public void actionPerformed(ActionEvent e) {
-
-            DatePickerDialog datePickerDialog = new DatePickerDialog(parentFrame);
-
-            datePickerDialog.addWindowListener(new WindowAdapter() {
-                @Override
-                public void windowClosed(WindowEvent e) {
-
-                    currentDate.set(datePickerDialog.getPickedYear(),
-                            datePickerDialog.getPickedMonth(),
-                            datePickerDialog.getPickedDay());
-
-                    if (currentDate.compareTo(previousDate) != 0) {
-                        previousDate = (Calendar) currentDate.clone();
-                        SimpleDateFormat sdf = new SimpleDateFormat("yyyy/MM/dd", new ULocale("fa-IR"));
-                        dateTextField.setText(Utils.toPersianNumber(sdf.format(currentDate.getTime())));
-                        notifyListeners();
-                    }
-
-                }
-            });
-
-        } // end of method actionPerformed
-
-    } // end of inner class ShowDatePickerDialogAction
 
 } // end of class JalaliDatePicker
 

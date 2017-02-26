@@ -17,10 +17,10 @@ public class Main {
 
             JalaliDatePicker jalaliDatePicker = new JalaliDatePicker(frame);
             // Use the following line to set the initial date of JalaliDatePicker
-            // JalaliDatePicker jalaliDatePicker = new JalaliDatePicker(1367, 8, 6);
+//            JalaliDatePicker jalaliDatePicker = new JalaliDatePicker(frame, 1367, 8, 6);
 
             // Use setDate to set the date of JalaliDatePicker
-            jalaliDatePicker.setDate(1367, 8, 6);
+//            jalaliDatePicker.setDate(1367, 6, 20);
 
             // Add a DateChangeListener to be notified when date is changed
             jalaliDatePicker.addDateChangeListener((newYear, newMonth, newDay) -> {
@@ -29,9 +29,9 @@ public class Main {
 
             frame.add(jalaliDatePicker, BorderLayout.CENTER);
 
-            JButton clearDateButton = new JButton("clear date");
-            clearDateButton.addActionListener(e -> jalaliDatePicker.clearDate());
-            frame.add(clearDateButton, BorderLayout.SOUTH);
+            JButton resetDateButton = new JButton("Reset date");
+            resetDateButton.addActionListener(e -> jalaliDatePicker.resetDate());
+            frame.add(resetDateButton, BorderLayout.SOUTH);
 
             frame.setSize(250, 100);
             frame.setResizable(false);

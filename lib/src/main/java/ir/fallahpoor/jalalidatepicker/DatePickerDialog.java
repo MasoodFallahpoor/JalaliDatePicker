@@ -44,7 +44,7 @@ class DatePickerDialog extends JDialog {
     private static ULocale persianLocale;
     private NumberSpinner yearSpinner;
 
-    DatePickerDialog(JFrame parentFrame) {
+    DatePickerDialog(JFrame parentFrame, Integer year, Integer month, Integer day) {
 
         ResourceBundle stringsBundle = ResourceBundle.getBundle("strings", new Locale("fa", "IR"));
         String[] dayNames = {stringsBundle.getString("sat"), stringsBundle.getString("sun"),
@@ -59,9 +59,9 @@ class DatePickerDialog extends JDialog {
 
         calendar = Calendar.getInstance(new ULocale("@calendar=persian"));
 
-        currentYear = calendar.get(Calendar.YEAR);
-        currentMonth = calendar.get(Calendar.MONTH);
-        currentDay = -1;
+        currentYear = (year == null ? calendar.get(Calendar.YEAR) : year);
+        currentMonth = (month == null ? calendar.get(Calendar.MONTH) : month - 1);
+        currentDay = (day == null ? -1 : day);
 
         JPanel daysPanel = new JPanel(new GridLayout(7, 7));
         daysPanel.setComponentOrientation(ComponentOrientation.RIGHT_TO_LEFT);
@@ -103,7 +103,7 @@ class DatePickerDialog extends JDialog {
                 currentMonth++;
             }
 
-            displayDate();
+            displayDate(currentYear, currentMonth, currentDay);
         });
 
         navigationPanel.add(nextMonthButton);
@@ -116,7 +116,7 @@ class DatePickerDialog extends JDialog {
         yearSpinner.addChangeListener(e -> {
             JSpinner s = (JSpinner) e.getSource();
             currentYear = (Integer) s.getValue();
-            displayDate();
+            displayDate(currentYear, currentMonth, currentDay);
         });
         currentDatePanel.add(yearSpinner);
 
@@ -135,7 +135,7 @@ class DatePickerDialog extends JDialog {
             } else {
                 currentMonth--;
             }
-            displayDate();
+            displayDate(currentYear, currentMonth, currentDay);
         });
 
         navigationPanel.add(previousMonthButton);
@@ -145,12 +145,11 @@ class DatePickerDialog extends JDialog {
         pack();
         setResizable(false);
         setLocationRelativeTo(parentFrame);
-        displayDate();
-        setVisible(true);
+        displayDate(currentYear, currentMonth, currentDay);
 
     } // end of JalaliDatePicker's constructor method
 
-    private void displayDate() {
+    private void displayDate(int year, int month, int day) {
 
         SimpleDateFormat sdf;
         int dayOfWeek;
@@ -158,7 +157,7 @@ class DatePickerDialog extends JDialog {
 
         sdf = new SimpleDateFormat("MMMM", persianLocale);
 
-        calendar.set(currentYear, currentMonth, 1);
+        calendar.set(year, month, day);
         dayOfWeek = calendar.get(Calendar.DAY_OF_WEEK) + 1;
         daysInMonth = calendar.getActualMaximum(Calendar.DAY_OF_MONTH);
 
@@ -166,32 +165,44 @@ class DatePickerDialog extends JDialog {
             button.setText("");
         }
 
-        for (int i = dayOfWeek - 1, day = 1; day <= daysInMonth; i++, day++) {
+        for (int i = dayOfWeek - 1, dayCounter = 1; dayCounter <= daysInMonth; i++, dayCounter++) {
 
             final int selection = i;
 
-            buttons[i].setText(Utils.toPersianNumber(String.valueOf(day)));
+            buttons[i].setText(Utils.toPersianNumber(String.valueOf(dayCounter)));
             buttons[i].addActionListener(actionEvent -> {
                 currentDay = Integer.parseInt(buttons[selection]
                         .getActionCommand());
-                dispose();
+                setVisible(false);
             });
 
-        } // end of for
+        }
+
+        yearSpinner.setValue(year);
 
         currentMonthLabel.setText(sdf.format(calendar.getTime()));
 
     } // end of method displayDate
 
-    public int getPickedYear() {
+    void setDate(int year, int month, int day) {
+
+        currentYear = year;
+        currentMonth = month;
+        currentDay = day;
+
+        displayDate(currentYear, currentMonth, currentDay);
+
+    }
+
+    int getPickedYear() {
         return currentYear;
     }
 
-    public int getPickedMonth() {
+    int getPickedMonth() {
         return currentMonth;
     }
 
-    public int getPickedDay() {
+    int getPickedDay() {
         return currentDay;
     }
 
