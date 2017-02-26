@@ -7,7 +7,7 @@ JalaliDatePicker is a Java swing component that provides an easy way for selecti
 Dependency
 ----------
 Add the URL of Jitpack repository in your root level build.gradle at the end of repositories.
-```
+```groovy
 allprojects {
     repositories {
         // other repositories go here
@@ -17,7 +17,7 @@ allprojects {
 ```
 
 Add the dependency to your module level build.gradle file.
-```
+```groovy
 dependencies {
     compile 'com.github.masoodfallahpoor.JalaliDatePicker:lib:v0.2'
 }
