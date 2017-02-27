@@ -20,7 +20,7 @@ import com.ibm.icu.text.SimpleDateFormat;
 import com.ibm.icu.util.Calendar;
 import com.ibm.icu.util.ULocale;
 
-import java.awt.FlowLayout;
+import java.awt.*;
 import java.awt.event.ComponentAdapter;
 import java.awt.event.ComponentEvent;
 import java.util.ArrayList;
@@ -195,6 +195,35 @@ public class JalaliDatePicker extends JComponent {
         setDate(defaultDate.get(Calendar.YEAR),
                 defaultDate.get(Calendar.MONTH) + 1,
                 defaultDate.get(Calendar.DAY_OF_MONTH));
+    }
+
+    /**
+     * Resizes date picker dialog so that it has width <code>width</code> and height <code>height</code>.
+     *
+     * @param width  the new width in pixels
+     * @param height the new height in pixels
+     */
+    public void setDatePickerDialogSize(int width, int height) {
+        datePickerDialog.setSize(width, height);
+    }
+
+    /**
+     * Sets the minimum size of date picker dialog
+     *
+     * @param width  the new width in pixels
+     * @param height the new height in pixels
+     */
+    public void setDatePickerDialogMinimumSize(int width, int height) {
+        datePickerDialog.setMinimumSize(new Dimension(width, height));
+    }
+
+    /**
+     * Sets whether date picker dialog is resizable by user.
+     *
+     * @param resizable <code>true</code> if date picker dialog is resizable; <code>false</code> otherwise.
+     */
+    public void setDatePickerDialogResizable(boolean resizable) {
+        datePickerDialog.setResizable(resizable);
     }
 
     private void notifyListeners() {
