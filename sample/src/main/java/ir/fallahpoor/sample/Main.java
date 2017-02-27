@@ -32,9 +32,8 @@ public class Main {
             // jalaliDatePicker.setDatePickerDialogResizable(false);
 
             // Add a DateChangeListener to be notified when date is changed
-            jalaliDatePicker.addDateChangeListener((newYear, newMonth, newDay) -> {
-                System.out.println("Date changed. New date is " + newYear + "/" + newMonth + "/" + newDay);
-            });
+            jalaliDatePicker.addDateChangeListener((newYear, newMonth, newDay) ->
+                    System.out.println("Date changed. New date is " + newYear + "/" + newMonth + "/" + newDay));
 
             frame.add(jalaliDatePicker, BorderLayout.CENTER);
 
