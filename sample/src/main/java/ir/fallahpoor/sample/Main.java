@@ -23,7 +23,7 @@ public class Main {
             // jalaliDatePicker.setDate(1367, 6, 20);
 
             // Use setDatePickerDialogSize to set the size of date picker dialog
-            // jalaliDatePicker.setDatePickerDialogSize(600, 400);
+            jalaliDatePicker.setDatePickerDialogSize(600, 300);
 
             // Use setDatePickerDialogMinimumSize to set the minimum size of date picker dialog
             // jalaliDatePicker.setDatePickerDialogMinimumSize(450, 300);
@@ -34,6 +34,9 @@ public class Main {
             // Add a DateChangeListener to be notified when date is changed
             jalaliDatePicker.addDateChangeListener((newYear, newMonth, newDay) ->
                     System.out.println("Date changed. New date is " + newYear + "/" + newMonth + "/" + newDay));
+
+            // Use setFont to set the default font of JalaliDatePicker
+            // jalaliDatePicker.setFont();
 
             frame.add(jalaliDatePicker, BorderLayout.CENTER);
 
