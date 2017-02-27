@@ -23,8 +23,10 @@ import com.ibm.icu.util.ULocale;
 import javax.swing.*;
 import java.awt.*;
 import java.awt.event.ActionListener;
+import java.util.Arrays;
 import java.util.Locale;
 import java.util.ResourceBundle;
+import java.util.function.Consumer;
 
 /**
  * @author Masood Fallahpoor
@@ -34,14 +36,14 @@ class DatePickerDialog extends JDialog {
     private int currentYear;
     private int currentMonth;
     private int currentDay;
+    private Calendar calendar;
+    private ULocale persianLocale;
     private JLabel currentMonthLabel;
-    private JButton[] buttons;
-    private static Calendar calendar;
-    private static ULocale persianLocale;
+    private JLabel[] dayNameLabels;
+    private JButton[] dayButtons;
     private NumberSpinner yearSpinner;
     private JButton nextMonthButton;
     private JButton previousMonthButton;
-    private JLabel[] dayNameLabels;
 
     DatePickerDialog(JFrame parentFrame, Integer year, Integer month, Integer day) {
 
@@ -77,15 +79,15 @@ class DatePickerDialog extends JDialog {
 
         }
 
-        buttons = new JButton[42];
+        dayButtons = new JButton[42];
 
-        for (int i = 0; i < buttons.length; i++) {
+        for (int i = 0; i < dayButtons.length; i++) {
 
-            buttons[i] = new JButton();
-            buttons[i].setFocusPainted(false);
-            buttons[i].setBackground(Color.white);
+            dayButtons[i] = new JButton();
+            dayButtons[i].setFocusPainted(false);
+            dayButtons[i].setBackground(Color.white);
 
-            daysPanel.add(buttons[i]);
+            daysPanel.add(dayButtons[i]);
 
         }
 
@@ -111,7 +113,6 @@ class DatePickerDialog extends JDialog {
 
         yearSpinner = new NumberSpinner(currentYear, currentYear - 50,
                 currentYear + 50, 1);
-
         yearSpinner.addChangeListener(e -> {
             JSpinner s = (JSpinner) e.getSource();
             currentYear = (Integer) s.getValue();
@@ -147,54 +148,6 @@ class DatePickerDialog extends JDialog {
 
     } // end of JalaliDatePicker's constructor method
 
-    private void displayDate(int year, int month, int day) {
-
-        SimpleDateFormat sdf;
-        int dayOfWeek;
-        int daysInMonth;
-
-        sdf = new SimpleDateFormat("MMMM", persianLocale);
-
-        calendar.set(year, month, day);
-        dayOfWeek = calendar.get(Calendar.DAY_OF_WEEK) + 1;
-        daysInMonth = calendar.getActualMaximum(Calendar.DAY_OF_MONTH);
-
-        for (JButton button : buttons) {
-            button.setText("");
-            for (ActionListener listener : button.getActionListeners()) {
-                button.removeActionListener(listener);
-            }
-        }
-
-        for (int i = dayOfWeek - 1, dayCounter = 1; dayCounter <= daysInMonth; i++, dayCounter++) {
-
-            final int selection = i;
-
-            buttons[i].setText(Utils.toPersianNumber(String.valueOf(dayCounter)));
-            buttons[i].addActionListener(actionEvent -> {
-                currentDay = Integer.parseInt(buttons[selection]
-                        .getActionCommand());
-                setVisible(false);
-            });
-
-        }
-
-        yearSpinner.setValue(year);
-
-        currentMonthLabel.setText(sdf.format(calendar.getTime()));
-
-    } // end of method displayDate
-
-    void setDate(int year, int month, int day) {
-
-        currentYear = year;
-        currentMonth = month;
-        currentDay = day;
-
-        displayDate(currentYear, currentMonth, currentDay);
-
-    }
-
     @Override
     public void setFont(Font font) {
 
@@ -204,12 +157,20 @@ class DatePickerDialog extends JDialog {
         yearSpinner.setFont(font);
         nextMonthButton.setFont(font);
         previousMonthButton.setFont(font);
-        for (JButton button : buttons) {
-            button.setFont(font);
-        }
+        performActionOnDayButtons(b -> b.setFont(font));
         for (JLabel label : dayNameLabels) {
             label.setFont(font);
         }
+
+    }
+
+    void setDate(int year, int month, int day) {
+
+        currentYear = year;
+        currentMonth = month;
+        currentDay = day;
+
+        displayDate(currentYear, currentMonth, currentDay);
 
     }
 
@@ -223,6 +184,48 @@ class DatePickerDialog extends JDialog {
 
     int getPickedDay() {
         return currentDay;
+    }
+
+    private void displayDate(int year, int month, int day) {
+
+        SimpleDateFormat sdf;
+        int dayOfWeek;
+        int daysInMonth;
+
+        sdf = new SimpleDateFormat("MMMM", persianLocale);
+
+        calendar.set(year, month, day);
+        dayOfWeek = calendar.get(Calendar.DAY_OF_WEEK) + 1;
+        daysInMonth = calendar.getActualMaximum(Calendar.DAY_OF_MONTH);
+
+        performActionOnDayButtons(b -> {
+            b.setText("");
+            for (ActionListener listener : b.getActionListeners()) {
+                b.removeActionListener(listener);
+            }
+        });
+
+        for (int i = dayOfWeek - 1, dayCounter = 1; dayCounter <= daysInMonth; i++, dayCounter++) {
+
+            final int selection = i;
+
+            dayButtons[i].setText(Utils.toPersianNumber(String.valueOf(dayCounter)));
+            dayButtons[i].addActionListener(actionEvent -> {
+                currentDay = Integer.parseInt(dayButtons[selection]
+                        .getActionCommand());
+                setVisible(false);
+            });
+
+        }
+
+        yearSpinner.setValue(year);
+
+        currentMonthLabel.setText(sdf.format(calendar.getTime()));
+
+    } // end of method displayDate
+
+    private void performActionOnDayButtons(Consumer<JButton> consumer) {
+        Arrays.stream(dayButtons).forEach(consumer);
     }
 
 } // end of class DatePickerDialog
