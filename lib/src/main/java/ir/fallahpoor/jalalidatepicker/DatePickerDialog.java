@@ -20,16 +20,11 @@ import com.ibm.icu.text.SimpleDateFormat;
 import com.ibm.icu.util.Calendar;
 import com.ibm.icu.util.ULocale;
 
-import java.awt.BorderLayout;
-import java.awt.Color;
-import java.awt.ComponentOrientation;
-import java.awt.Dimension;
-import java.awt.FlowLayout;
-import java.awt.GridLayout;
+import javax.swing.*;
+import java.awt.*;
 import java.awt.event.ActionListener;
 import java.util.Locale;
 import java.util.ResourceBundle;
-import javax.swing.*;
 
 /**
  * @author Masood Fallahpoor
@@ -44,6 +39,9 @@ class DatePickerDialog extends JDialog {
     private static Calendar calendar;
     private static ULocale persianLocale;
     private NumberSpinner yearSpinner;
+    private JButton nextMonthButton;
+    private JButton previousMonthButton;
+    private JLabel[] dayNameLabels;
 
     DatePickerDialog(JFrame parentFrame, Integer year, Integer month, Integer day) {
 
@@ -68,7 +66,7 @@ class DatePickerDialog extends JDialog {
         daysPanel.setComponentOrientation(ComponentOrientation.RIGHT_TO_LEFT);
         daysPanel.setPreferredSize(new Dimension(500, 120));
 
-        JLabel dayNameLabels[] = new JLabel[7];
+        dayNameLabels = new JLabel[7];
 
         for (int i = 0; i < dayNameLabels.length; i++) {
 
@@ -93,7 +91,7 @@ class DatePickerDialog extends JDialog {
 
         JPanel navigationPanel = new JPanel(new GridLayout(1, 3));
 
-        JButton nextMonthButton = new JButton(
+        nextMonthButton = new JButton(
                 stringsBundle.getString("next_month"));
 
         nextMonthButton.addActionListener(actionEvent -> {
@@ -126,7 +124,7 @@ class DatePickerDialog extends JDialog {
 
         navigationPanel.add(currentDatePanel);
 
-        JButton previousMonthButton = new JButton(
+        previousMonthButton = new JButton(
                 stringsBundle.getString("previous_month"));
 
         previousMonthButton.addActionListener(actionEvent -> {
@@ -144,7 +142,6 @@ class DatePickerDialog extends JDialog {
         add(daysPanel, BorderLayout.CENTER);
         add(navigationPanel, BorderLayout.SOUTH);
         pack();
-        setResizable(false);
         setLocationRelativeTo(parentFrame);
         displayDate(currentYear, currentMonth, currentDay);
 
@@ -195,6 +192,24 @@ class DatePickerDialog extends JDialog {
         currentDay = day;
 
         displayDate(currentYear, currentMonth, currentDay);
+
+    }
+
+    @Override
+    public void setFont(Font font) {
+
+        super.setFont(font);
+
+        currentMonthLabel.setFont(font);
+        yearSpinner.setFont(font);
+        nextMonthButton.setFont(font);
+        previousMonthButton.setFont(font);
+        for (JButton button : buttons) {
+            button.setFont(font);
+        }
+        for (JLabel label : dayNameLabels) {
+            label.setFont(font);
+        }
 
     }
 

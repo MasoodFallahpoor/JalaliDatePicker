@@ -20,11 +20,12 @@ import com.ibm.icu.text.SimpleDateFormat;
 import com.ibm.icu.util.Calendar;
 import com.ibm.icu.util.ULocale;
 
+import javax.swing.*;
 import java.awt.*;
 import java.awt.event.ComponentAdapter;
 import java.awt.event.ComponentEvent;
 import java.util.ArrayList;
-import javax.swing.*;
+import java.util.List;
 
 /**
  * <code>JalaliDatePicker</code> is a Swing component that provides an easy way for selecting a Jalali (a.k.a. Shamsi)
@@ -32,9 +33,10 @@ import javax.swing.*;
  *
  * @author Masood Fallahpoor
  */
+@SuppressWarnings({"unused", "WeakerAccess"})
 public class JalaliDatePicker extends JComponent {
 
-    private ArrayList<DateChangeListener> dataChangeListeners;
+    private List<DateChangeListener> dataChangeListeners;
     private Calendar previousDate;
     private Calendar currentDate;
     private Calendar defaultDate;
@@ -224,6 +226,20 @@ public class JalaliDatePicker extends JComponent {
      */
     public void setDatePickerDialogResizable(boolean resizable) {
         datePickerDialog.setResizable(resizable);
+    }
+
+    /**
+     * Sets the font of <code>JalaliDatePicker</code>
+     *
+     * @param font new font
+     */
+    public void setFont(Font font) {
+
+        if (font != null) {
+            dateTextField.setFont(font);
+            datePickerDialog.setFont(font);
+        }
+
     }
 
     private void notifyListeners() {
