@@ -19,7 +19,7 @@ allprojects {
 Add the dependency to your module level build.gradle file.
 ```groovy
 dependencies {
-    compile 'com.github.masoodfallahpoor.JalaliDatePicker:lib:v0.3'
+    compile 'com.github.masoodfallahpoor.JalaliDatePicker:lib:v0.4'
 }
 ```
 
