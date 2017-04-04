@@ -57,10 +57,11 @@ public class JalaliDatePicker extends JComponent {
      *
      * @param parentFrame the parent of JalaliDatePicker
      * @param year        default year. Year must be in range [current year - 50, current year + 50]. If year is null
-     *                    current year is used.
-     * @param month       default month. Month is 1-based i.e. first month is 1. If month is null current month is used.
-     * @param day         default day of month. Day of month is 1-based i.e. first day of month is 1. If day if month is
-     *                    null current day of month is used.
+     *                    current year is used as default year.
+     * @param month       default month. Month is 1-based i.e. first month is 1. If month is null current month is used
+     *                    as default month.
+     * @param day         default day of month. Day of month is 1-based i.e. first day of month is 1. If day of month is
+     *                    null current day of month is used as default day of month.
      */
     public JalaliDatePicker(JFrame parentFrame, Integer year, Integer month, Integer day) {
 

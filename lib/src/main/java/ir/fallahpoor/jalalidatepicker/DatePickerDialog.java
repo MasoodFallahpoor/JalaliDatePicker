@@ -97,9 +97,14 @@ class DatePickerDialog extends JDialog {
                 stringsBundle.getString("next_month"));
 
         nextMonthButton.addActionListener(actionEvent -> {
+
+            Comparable yearMaxValue = ((SpinnerNumberModel) yearSpinner.getModel()).getMaximum();
+
             if (currentMonth == 11) {
-                currentMonth = 0;
-                yearSpinner.setValue(yearSpinner.getNextValue());
+                if (!yearMaxValue.equals(currentYear)) {
+                    currentMonth = 0;
+                    yearSpinner.setValue(yearSpinner.getNextValue());
+                }
             } else {
                 currentMonth++;
             }
@@ -129,9 +134,14 @@ class DatePickerDialog extends JDialog {
                 stringsBundle.getString("previous_month"));
 
         previousMonthButton.addActionListener(actionEvent -> {
+
+            Comparable yearMinValue = ((SpinnerNumberModel) yearSpinner.getModel()).getMinimum();
+
             if (currentMonth == 0) {
-                currentMonth = 11;
-                yearSpinner.setValue(yearSpinner.getPreviousValue());
+                if (!yearMinValue.equals(currentYear)) {
+                    currentMonth = 11;
+                    yearSpinner.setValue(yearSpinner.getPreviousValue());
+                }
             } else {
                 currentMonth--;
             }
